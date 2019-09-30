@@ -8,9 +8,12 @@ $(document).ready(function() {
       var w = canvas.width;
       var h = canvas.height;
       var waterHeight = 0;
+      var waveMove = 1;
+      var waveVelocity = 1;
       ctx.strokeStyle = 'rgba(174,194,224,0.5)';
       ctx.lineWidth = 1;
       ctx.lineCap = 'round';
+
   
       var init = [];
       var maxParts = 1000;
@@ -42,7 +45,8 @@ $(document).ready(function() {
           ctx.stroke();
         }
         move();
-        increasePool();
+        //increasePool();
+        drawSin();
       }
   
       function move() {
@@ -55,6 +59,18 @@ $(document).ready(function() {
             p.y = -20;
           }
         }
+      }
+
+      function drawSin(){
+        for(var xCoord = 0; xCoord < w; xCoord+=2){
+            ctx.beginPath();
+            var s = Math.sin(xCoord/20);
+            console.log(xCoord);
+            ctx.rect(xCoord, (h/2)+s*20, 2, h);
+            ctx.fillStyle = 'rgba(174,194,224,0.5)';
+            ctx.fill();
+        }
+        waveMove+=waveVelocity;
       }
 
       function increasePool() {
