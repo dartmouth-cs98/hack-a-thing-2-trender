@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "selenium-webdriver": "^4.0.0-alpha.5"
+  },
+  "scripts": {
+    "start": "node index.html"
+  },
+  "name": "hack2",
+  "version": "1.0.0",
+  "description": "hacking",
+  "main": "index.js",
+  "author": "annika",
+  "license": "MIT"
+}
