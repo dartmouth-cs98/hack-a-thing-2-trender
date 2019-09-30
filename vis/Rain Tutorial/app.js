@@ -34,18 +34,18 @@ $(document).ready(function() {
   
       function draw() {
         ctx.clearRect(0, 0, w, h);
-        for (var c = 0; c < particles.length; c++) {
-          var p = particles[c];
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p.x + p.l * p.xs, p.y + p.l * p.ys);
-          if((p.y + p.l * p.ys)>(h-waterHeight)){
-              pinkSplash(p.x + p.l * p.xs, p.y + p.l * p.ys);
-          }
-          ctx.stroke();
-        }
-        move();
-        //increasePool();
+        // for (var c = 0; c < particles.length; c++) {
+        //   var p = particles[c];
+        //   ctx.beginPath();
+        //   ctx.moveTo(p.x, p.y);
+        //   ctx.lineTo(p.x + p.l * p.xs, p.y + p.l * p.ys);
+        //   if((p.y + p.l * p.ys)>(h-waterHeight)){
+        //       pinkSplash(p.x + p.l * p.xs, p.y + p.l * p.ys);
+        //   }
+        //   ctx.stroke();
+        // }
+        // move();
+        increasePool();
         drawSin();
       }
   
@@ -62,11 +62,13 @@ $(document).ready(function() {
       }
 
       function drawSin(){
-        for(var xCoord = 0; xCoord < w; xCoord+=2){
+        for(var xCoord = -1*waveMove; xCoord < (-1*waveMove+w); xCoord+=2){
+            if(xCoord%10==0){
+                console.log(xCoord);
+            }
             ctx.beginPath();
             var s = Math.sin(xCoord/20);
-            console.log(xCoord);
-            ctx.rect(xCoord, (h/2)+s*20, 2, h);
+            ctx.rect(xCoord+waveMove, h, 2, (waterHeight/2)+s*20);
             ctx.fillStyle = 'rgba(174,194,224,0.5)';
             ctx.fill();
         }
@@ -74,11 +76,7 @@ $(document).ready(function() {
       }
 
       function increasePool() {
-        ctx.beginPath();
-        ctx.rect(0, h-waterHeight, w, h);
-        ctx.fillStyle = 'rgba(174,194,224,0.5)';
-        ctx.fill();
-        waterHeight+= 0.25;
+        waterHeight -= 0.5;
       }
 
       function pinkSplash(x, y) {
