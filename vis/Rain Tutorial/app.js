@@ -96,7 +96,7 @@ $(document).ready(function() {
               ctx.fillStyle = 'rgba(174,194,224,0.5)';
               ctx.fill();
               ctx.beginPath();
-              ctx.rect(x, y-8, 1, 1);
+              ctx.rect(x, y-8, 1.5, 1.5);
               ctx.fillStyle = 'rgba(174,194,224,0.5)';
               ctx.fill();
             }
