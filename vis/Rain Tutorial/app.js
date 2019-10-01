@@ -10,6 +10,8 @@ $(document).ready(function() {
       var waterHeight = 0;
       var waveMove = 1;
       var waveVelocity = 1;
+      var waveHeight = 10;
+      var waveIncrease = true;
       ctx.strokeStyle = 'rgba(174,194,224,0.5)';
       ctx.lineWidth = 1;
       ctx.lineCap = 'round';
@@ -27,22 +29,33 @@ $(document).ready(function() {
         })
       }
   
-      var particles = new Map();
+      var particles = [];
+      var bubbles = [];
       for (var b = 0; b < maxParts; b++) {
-        particles.set(init[b].x, init[b]);
+        particles[b] = init[b];
+        bubbles[b] = null;
       }
   
       function draw() {
         ctx.clearRect(0, 0, w, h);
-        for (var value of particles.values()) {
-          var p = value;
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p.x + p.l * p.xs, p.y + p.l * p.ys);
-          if((p.y + p.l)>(h-waterHeight)){
-              pinkSplash(p.x + p.l * p.xs, p.y + p.l * p.ys);
+        for(var c = 0; c < particles.length; c++){
+          if(particles[c]!=null){
+            var p = particles[c];
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x + p.l * p.xs, p.y + p.l * p.ys);
+            if((p.y + p.l)>(h-waterHeight)){
+                bubbles[c] = p;
+                particles[c] = null;
+            }
+            ctx.stroke();
           }
-          ctx.stroke();
+        }
+        for(var b = 0; b < bubbles.length; b++){
+          var p = bubbles[b];
+          if(p!=null){
+            pinkSplash(p.x + p.l * p.xs, p.y + p.l * p.ys);
+          }
         }
         move();
         increasePool();
@@ -50,15 +63,25 @@ $(document).ready(function() {
       }
   
       function move() {
-        for (var value of particles.values()) {
-          var p = value;
-          p.x += p.xs*0.3;
-          p.y += p.ys*0.3;
-          if(p.x > w || p.y > h){
-            p.x = Math.random() * w;
-            p.y = -20;
+        for(var c = 0; c < particles.length; c++){
+          var p = particles[c];
+          if(p!=null){
+            p.x += p.xs*0.35;
+            p.y += p.ys*0.35;
           }
-          
+        }
+        for(var b = 0; b < bubbles.length; b++){
+          var p = bubbles[b];
+          if(p!=null){
+            p.x += p.xs*0.1;
+            p.y += p.ys*0.1;
+            if(p.x > w || p.y > h){
+              p.x = Math.random() * w;
+              p.y = -20;
+              bubbles[b] = null;
+              particles[b] = p;
+            }
+          }
         }
       }
 
@@ -66,22 +89,61 @@ $(document).ready(function() {
         for(var xCoord = -1*waveMove; xCoord < (-1*waveMove+w); xCoord+=2){
             ctx.beginPath();
             var s = Math.sin(xCoord/20);
-            ctx.rect(xCoord+waveMove, (h-waterHeight)-s*20, 2, h);
-            ctx.fillStyle = 'rgba(174,194,224,0.5)';
-            ctx.fill();
+            var x = xCoord+waveMove;
+            var y = (h-waterHeight)-s*waveHeight;
+            if(collision(x, y)){
+              ctx.rect(x, y+3, 2, h);
+              ctx.fillStyle = 'rgba(174,194,224,0.5)';
+              ctx.fill();
+              ctx.beginPath();
+              ctx.rect(x, y-8, 1, 1);
+              ctx.fillStyle = 'rgba(174,194,224,0.5)';
+              ctx.fill();
+            }
+            else{
+              ctx.rect(x, y, 2, h);
+              ctx.fillStyle = 'rgba(174,194,224,0.5)';
+              ctx.fill();
+            }
+            
         }
         waveMove+=waveVelocity;
+        if(waveIncrease){
+          waveHeight+=0.5;
+        }
+        else{
+          waveHeight-=0.5;
+        }
+        if(waveHeight>14){
+          waveIncrease = false;
+        }
+        if(waveHeight <6){
+          waveIncrease = true;
+        }
+      }
+
+      function collision(x, y) {
+        for(var c = 0; c < particles.length; c++){
+          if(particles[c] !=null){
+            var p = particles[c];
+            if(p.x < x+2 && p.x > x-2){
+              if(p.y > y-3){
+                return true;
+              }
+            }
+          }
+        }
       }
 
       function increasePool() {
-        waterHeight += 0.5;
+        waterHeight += 0.3;
       }
 
       function pinkSplash(x, y) {
         ctx.beginPath();
         var radius = 4;
         ctx.arc(x, y, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = 'pink';
+        ctx.fillStyle = 'rgbargb(255,20,147, 1)';
         ctx.fill();
       }
   
